@@ -38,7 +38,7 @@ jobs:
             apk add --update ansible
            
       - run:
-          name: Run Playbook and Configure server
+          name: Run Playbook and Configure server with ansible
           command: |
             ansible-playbook -i inventory main.yml
            
