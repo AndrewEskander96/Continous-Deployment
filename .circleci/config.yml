@@ -1,42 +1,17 @@
-version: 2.1
+version: '2.1'
 orbs:
-  aws-cli: circleci/aws-cli@2.0.6
-# Use a package of configuration called an orb.
+  aws-cli: circleci/aws-cli@2.0
 jobs:
-  setup_aws_cli:
-      executor: aws-cli/default
-      steps:
-        - aws-cli/setup:
-            aws-access-key-id: AWS_ACCESS_KEY
-            aws-secret-access-key: AWS_ACCESS_SECRET
-            aws-region: AWS_REGION_NAME
-            aws_session_token: AWS_Session_Token
-        - run:
-            name: "Testing AWS configuration"
-            command: |
-              # Show what's there now
-              aws configure list
-              # Retrieve security groups
-              current_security_group=$(aws ec2 describe-security-groups --profile profilename --group-id ${GROUP_ID})
-  create_infrastructure:  # Choose any name, such as `build`
-      # The primary container, where your job's commands will run
-      docker:
-        - image: amazon/aws-cli
-      steps:
-        - checkout # check out the code in the project directory
-        - run: 
-            name: Create CloudFormation Stack
-            command: |
-              aws cloudformation deploy \
-                --template-file .circleci/template.yml \
-                --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
-                --region us-east-1
+  aws-cli-cred-setup:
+    executor: aws-cli/default
+    steps:
+      - aws-cli/setup:
+          aws-access-key-id: AWS_ACCESS_KEY
+          aws-secret-access-key: AWS_ACCESS_SECRET
+          aws-region: AWS_REGION_NAME
+          aws-session-token: AWS_SESSION_TOKEN
 workflows:
-  # Name the workflow
-  Create_InfraStructure_ByAndrew:
+  aws-cli:
     jobs:
-      - setup_aws_cli:
+      - aws-cli-cred-setup:
           context: aws
-      - create_infrastructure:
-            requires:
-              - setup_aws_cli
