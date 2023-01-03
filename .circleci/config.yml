@@ -9,10 +9,10 @@ jobs:
         - image: amazon/aws-cli
       steps:
         - aws-cli/setup:
-            AWS_Access_Key_ID: $AWS_ACCESS_KEY_ID
-            AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-            AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
-            AWS_Session_Token:  $AWS_Session_Token
+            AWS_Access_Key_ID: "$AWS_ACCESS_KEY_ID"
+            AWS_SECRET_ACCESS_KEY: "$AWS_SECRET_ACCESS_KEY"
+            AWS_DEFAULT_REGION: "$AWS_DEFAULT_REGION"
+            AWS_Session_Token:  "$AWS_Session_Token"
         - run:
             name: "Testing AWS configuration"
             command: |
