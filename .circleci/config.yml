@@ -9,11 +9,11 @@ jobs:
           aws-access-key-id: AWS_ACCESS_KEY
           aws-secret-access-key: AWS_ACCESS_SECRET
           aws-region: AWS_REGION_NAME
-  create_infrastructure: 
-      docker:
-        - image: amazon/aws-cli
+  create_infrastructure:
+      executor: aws-cli/default
       steps:
         - checkout
+        - aws-cli/setup
         - run:
             name: Create Cloudformation Stack
             command: |
