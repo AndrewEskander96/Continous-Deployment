@@ -1,42 +1,22 @@
 Description: We will Create A stack Using this file to Create an EC2 and SG in the AWS console, Using CloudFormation
 Resources:
-  AndrewSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
+  EC2Instance:
+    Type: 'AWS::EC2::Instance'
     Properties:
-      GroupDescription: this is a security group created by CF to allow TCP 80 Ingress
-      GroupName: Andrew-test
+      SecurityGroups:
+        - !Ref InstanceSecurityGroup
+      # Change this, as applicable to you      
+      KeyName: udacity
+      # Change this, as applicable to you
+      # You may need to find out what instance types are available in your region - use https://cloud-images.ubuntu.com/locator/ec2/
+      ImageId: 'ami-09e67e426f25ce0d7' 
+      InstanceType: t3.micro
+  InstanceSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable SSH access via port 22
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CirdrIP: 0.0.0.0/0
-      SecurityGroupEgress:
-        - IpProtocol: -1
-          FromPort: -1
-          ToPort: -1
-          CidrIp: 0.0.0.0/0
-      VpcId: vpc-0efbe6618b27be8d1
-  AndrewEc2Instance:
-    Type: AWS::EC2::Instance
-    Properties:
-      keyName: andrew-ec2-aws.pem
-      ImageId: ami-0b0dcb5067f052a63
-      InstanceType: t3.micro
-      NetworkInterfaces:
-        - AssociatePublicIpAddress: "true"
-          DeviceIndex: "0"
-          GroupSet:
-            - Ref: "AndrewSecurityGroup"
-          SubnetId: subnet-05d282967015ac2b0
-      UserData:
-       Fn::Base64: !Sub |
-         #!/bin/bash
-         sudo yum update -y
-         sudo yum install -y httpd
-         sudo systemctl start httpd
-         sudo systemctl enable httpd     
-
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0 
