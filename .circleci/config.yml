@@ -35,4 +35,7 @@ workflows:
   # Name the workflow
   Create_InfraStructure_ByAndrew:
     jobs:
-      - create_infrastructure
+      - setup_aws_cli
+      - create_infrastructure:
+            requires:
+              - setup_aws_cli
