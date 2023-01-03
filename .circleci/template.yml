@@ -19,7 +19,7 @@ Resources:
           FromPort: -1
           ToPort: -1
           CidrIp: 0.0.0.0/0
-      VpcId: vpc-08af0755239c4561a
+      VpcId: vpc-0efbe6618b27be8d1
   AndrewEc2Instance:
     Type: AWS::EC2::Instance
     Properties:
@@ -31,7 +31,7 @@ Resources:
           DeviceIndex: "0"
           GroupSet:
             - Ref: "AndrewSecurityGroup"
-          SubnetId: subnet-07df6f82650ec0ecd
+          SubnetId: subnet-05d282967015ac2b0
       UserData:
        Fn::Base64: !Sub |
          #!/bin/bash
@@ -39,3 +39,4 @@ Resources:
          sudo yum install -y httpd
          sudo systemctl start httpd
          sudo systemctl enable httpd     
+
