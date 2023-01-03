@@ -1,0 +1,41 @@
+Description: We will Create A stack Using this file to Create an EC2 and SG in the AWS console, Using CloudFormation
+Resources:
+  AndrewSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: this is a security group created by CF to allow TCP 80 Ingress
+      GroupName: Andrew-test
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CirdrIP: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+      VpcId: vpc-08af0755239c4561a
+  AndrewEc2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      keyName: andrew-ec2-aws.pem
+      ImageId: ami-0b0dcb5067f052a63
+      InstanceType: t3.micro
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: "true"
+          DeviceIndex: "0"
+          GroupSet:
+            - Ref: "AndrewSecurityGroup"
+          SubnetId: subnet-07df6f82650ec0ecd
+      UserData:
+       Fn::Base64: !Sub |
+         #!/bin/bash
+         sudo yum update -y
+         sudo yum install -y httpd
+         sudo systemctl start httpd
+         sudo systemctl enable httpd     
