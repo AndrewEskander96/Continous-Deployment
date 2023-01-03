@@ -43,7 +43,7 @@ jobs:
             ansible-playbook -i inventory main.yml
            
 workflows:
-  Deploy&Configure:
+  Deploy&ConfigurwithAnsible:
     jobs:
       - aws-cli-cred-setup:
           context: aws
