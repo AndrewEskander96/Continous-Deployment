@@ -1,0 +1,55 @@
+version: '2.1'
+orbs:
+  aws-cli: circleci/aws-cli@2.0
+jobs:
+  aws-cli-cred-setup:
+    executor: aws-cli/default
+    steps:
+      - aws-cli/setup:
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_ACCESS_SECRET
+          aws-region: AWS_REGION_NAME
+          
+  create_infrastructure:
+      executor: aws-cli/default
+      steps:
+        - checkout
+        - aws-cli/setup
+        - run:
+            name: Create Cloudformation Stack
+            command: |
+              aws cloudformation deploy \
+                --template-file template.yml \
+                --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
+                --region us-east-1
+              
+  # Exercise: Config and Deployment
+  configure_infrastructure: 
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+              # You can get this ID in the section where you registered the SSH Key
+              fingerprints: ["ba:fb:b0:43:1e:67:8f:1a:9b:8c:3e:8b:7b:48:0a:68"] 
+      - run:
+          name: Install Ansible
+          command: |
+            apk add --update ansible
+           
+      - run:
+          name: Run Playbook and Configure server with ansible
+          command: |
+            ansible-playbook -i inventory main.yml
+           
+workflows:
+  Deploy&ConfigurwithAnsible:
+    jobs:
+      - aws-cli-cred-setup:
+          context: aws
+      - create_infrastructure:
+           requires:
+              - aws-cli-cred-setup
+      - configure_infrastructure:
+           requires:
+               - create_infrastructure
